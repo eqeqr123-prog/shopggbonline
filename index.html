@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Shop GGB</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="main-header">
+  <div class="header-left">
+    <a href="#" class="logo" onclick="goHome(); return false;">Shop GGB</a>
+  </div>
+
+  <nav class="main-nav">
+    <ul>
+      <li class="dropdown">
+        <a href="#" class="dropdown-toggle">Sản phẩm</a>
+        <div class="dropdown-menu">
+          <div class="dropdown-column">
+            <h4>Tất cả sản phẩm</h4>
+            <a href="#" onclick="filterProducts('all')">Tất cả sản phẩm</a>
+            <a href="#" onclick="filterProducts('new')">Sản phẩm mới</a>
+            <a href="#" onclick="filterProducts('best')">Bán chạy nhất</a>
+          </div>
+          <div class="dropdown-column">
+            <h4>Áo Nam</h4>
+            <a href="#" onclick="filterProducts('ao-thun')">Áo Thun</a>
+            <a href="#" onclick="filterProducts('ao-polo')">Áo Polo</a>
+            <a href="#" onclick="filterProducts('ao-somi')">Áo Sơmi</a>
+            <a href="#" onclick="filterProducts('ao-khoac')">Áo Khoác</a>
+            <a href="#" onclick="filterProducts('ao-ni')">Áo Nỉ & Len</a>
+          </div>
+          <div class="dropdown-column">
+            <h4>Quần Nam</h4>
+            <a href="#" onclick="filterProducts('quan-jean')">Quần Jean</a>
+            <a href="#" onclick="filterProducts('quan-short')">Quần Short</a>
+            <a href="#" onclick="filterProducts('quan-kaki')">Quần Kaki & Chino</a>
+            <a href="#" onclick="filterProducts('quan-jogger')">Quần Jogger</a>
+            <a href="#" onclick="filterProducts('quan-boxer')">Quần Boxer</a>
+          </div>
+          <div class="dropdown-column">
+            <h4>Giày & Phụ kiện</h4>
+            <a href="#" onclick="filterProducts('giay')">Giày & Dép</a>
+            <a href="#" onclick="filterProducts('phukien')">Balo, Túi & Ví</a>
+            <a href="#" onclick="filterProducts('non')">Nón</a>
+            <a href="#" onclick="filterProducts('thatlung')">Thắt Lưng</a>
+            <a href="#" onclick="filterProducts('matkinh')">Mắt Kính</a>
+          </div>
+        </div>
+      </li>
+      <li><a href="#" onclick="filterProducts('new'); return false;">Hàng mới</a></li>
+      <li><a href="#" onclick="filterProducts('best'); return false;">Hàng bán chạy</a></li>
+    </ul>
+  </nav>
+
+    <div class="header-right">
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Tìm kiếm sản phẩm...">
+    </div>
+    <span id="header-user-name" class="header-user-name hidden"></span>
+    <button class="icon-btn" type="button" onclick="toggleAuth()">👤</button>
+    <button class="icon-btn cart-btn" onclick="openCart()">🛒 <span id="cart-count">0</span></button>
+  </div>
+</header>
+
+<!-- AUTH -->
+<div id="auth-box" class="hidden">
+  <input type="text" name="fakeusernameremembered" autocomplete="username" style="display:none">
+  <input type="password" name="fakepasswordremembered" autocomplete="current-password" style="display:none">
+  <div id="auth-login" class="auth-view">
+    <h3>Đăng nhập</h3>
+    <input id="loginUser" autocomplete="off" placeholder="Tài khoản *" required>
+    <input id="loginPass" type="password" autocomplete="new-password" placeholder="Mật khẩu *" required>
+    <a href="#" class="forgot-password" onclick="showForgotPassword(); return false;">Quên mật khẩu</a>
+    <button onclick="login()" class="btn-login">ĐĂNG NHẬP</button>
+    <button onclick="showRegisterForm()" class="btn-register">Tạo tài khoản</button>
+  </div>
+
+  <div id="auth-register" class="auth-view hidden">
+    <h3>Tạo tài khoản</h3>
+    <input id="regUser" autocomplete="off" placeholder="Tài khoản *" required>
+    <input id="regPass" autocomplete="new-password" type="password" placeholder="Mật khẩu *" required>
+    <input id="regPass2" autocomplete="new-password" type="password" placeholder="Xác nhận mật khẩu *" required>
+    <button id="registerBtn" onclick="register()" class="btn-login">ĐĂNG KÝ</button>
+    <div id="register-message" class="auth-message"></div>
+    <button onclick="showLoginForm()" class="btn-register">Quay lại đăng nhập</button>
+  </div>
+
+  <div id="auth-reset" class="auth-view hidden">
+    <h3>Quên mật khẩu</h3>
+    <div class="account-field">
+      <label>Tài khoản</label>
+      <input id="resetUser" autocomplete="off" placeholder="Tài khoản *" required>
+    </div>
+    <input id="resetPass" autocomplete="new-password" type="password" placeholder="Mật khẩu mới *" required>
+    <input id="resetPass2" autocomplete="new-password" type="password" placeholder="Xác nhận mật khẩu mới *" required>
+    <button id="resetBtn" onclick="resetPassword()" class="btn-login">ĐỔI MẬT KHẨU</button>
+    <div id="reset-message" class="auth-message"></div>
+    <button onclick="showLoginForm()" class="btn-register">Quay lại đăng nhập</button>
+  </div>
+
+  <div id="auth-profile" class="auth-view hidden">
+    <div class="account-container">
+      <aside class="account-sidebar">
+        <h3>Tài khoản của tôi</h3>
+        <nav class="account-menu">
+          <button class="account-item" data-section="info" onclick="switchAccountSection(event)">Thông tin của tôi</button>
+          <button class="account-item" data-section="address" onclick="switchAccountSection(event)">Số địa chỉ</button>
+        </nav>
+        <h3 style="margin-top:18px">Trạng thái đơn hàng</h3>
+        <nav class="account-menu">
+          <button class="account-item" data-section="orders-all" onclick="switchAccountSection(event)">Tất cả các đơn hàng</button>
+          <button class="account-item" data-section="orders-processing" onclick="switchAccountSection(event)">Đơn hàng xử lý</button>
+          <button class="account-item" data-section="orders-pickup" onclick="switchAccountSection(event)">Đơn hàng chờ lấy hàng</button>
+          <button class="account-item" data-section="orders-shipping" onclick="switchAccountSection(event)">Đơn hàng đang giao</button>
+          <button class="account-item" data-section="orders-delivered" onclick="switchAccountSection(event)">Đơn hàng đã giao</button>
+          <button class="account-item" data-section="orders-cancelled" onclick="switchAccountSection(event)">Đơn hàng đã hủy</button>
+        </nav>
+
+        
+      </aside>
+      <!-- right column removed for modal-based UI -->
+      <div class="account-content-placeholder">
+        <p>Chọn mục bên trái để mở cửa sổ tương ứng.</p>
+      </div>
+
+      <!-- INFO modal for main page -->
+      <div id="modal-info" class="modal hidden">
+        <div class="modal-backdrop" onclick="closeModal('modal-info')"></div>
+        <div class="notification-content" style="max-width:620px; width:90%">
+          <button style="float:right;background:transparent;border:none;font-size:18px;" onclick="closeModal('modal-info')">×</button>
+          <h3>Thông tin của tôi</h3>
+          <div class="account-field">
+            <label>Họ</label>
+            <input id="modal-profile-lastname" placeholder="Họ">
+          </div>
+          <div class="account-field">
+            <label>Tên</label>
+            <input id="modal-profile-firstname" placeholder="Tên">
+          </div>
+          <div class="account-field">
+            <label>Số điện thoại</label>
+            <input id="modal-profile-phone" placeholder="Số điện thoại">
+          </div>
+          <div class="account-field">
+            <label>Ngày sinh</label>
+            <input id="modal-profile-dob" type="date">
+          </div>
+          <div style="margin-top:12px"><button class="btn-login" onclick="saveProfileFromModal()">LƯU</button></div>
+        </div>
+      </div>
+
+      <!-- ADDRESS modal for main page -->
+      <div id="modal-address" class="modal hidden">
+        <div class="modal-backdrop" onclick="closeModal('modal-address')"></div>
+        <div class="notification-content" style="max-width:620px; width:90%">
+          <button style="float:right;background:transparent;border:none;font-size:18px;" onclick="closeModal('modal-address')">×</button>
+          <h3>Địa chỉ của tôi</h3>
+          <div class="account-field">
+            <label>Địa chỉ hiện tại</label>
+            <input id="modal-profile-address" placeholder="Địa chỉ của tôi">
+          </div>
+          <div style="margin-top:12px"><button class="btn-login" onclick="saveAddressFromModal()">LƯU</button></div>
+        </div>
+      </div>
+
+      <!-- ORDERS modal for main page (clean) -->
+      <div id="modal-orders" class="modal hidden">
+        <div class="modal-backdrop" onclick="closeModal('modal-orders')"></div>
+        <div class="notification-content" style="max-width:900px; width:90%;">
+          <button style="float:right;background:transparent;border:none;font-size:18px;" onclick="closeModal('modal-orders')">×</button>
+          <h2>ĐƠN HÀNG CỦA TÔI</h2>
+          <div class="orders-tabs" style="margin-bottom:12px;">
+            <button id="main-tab-all" onclick="renderOrdersList('all', true)">Tất cả đơn hàng</button>
+            <button id="main-tab-processing" onclick="renderOrdersList('processing', true)">Chờ xử lý</button>
+            <button id="main-tab-pickup" onclick="renderOrdersList('pickup', true)">Chờ lấy hàng</button>
+            <button id="main-tab-shipping" onclick="renderOrdersList('shipping', true)">Đang giao</button>
+            <button id="main-tab-delivered" onclick="renderOrdersList('delivered', true)">Đã giao</button>
+            <button id="main-tab-cancelled" onclick="renderOrdersList('cancelled', true)">Đã hủy</button>
+          </div>
+          <div id="orders-modal-actions-main" class="orders-actions-bar"></div>
+          <div id="orders-modal-list-main"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRODUCT LIST -->
+<section class="product-section">
+  <div class="section-header">
+    <h2 id="product-section-title">Sản phẩm</h2>
+    <p id="product-section-subtitle">Những mẫu quần áo nam mới nhất, sale tốt nhất.</p>
+  </div>
+  <div class="product-toolbar">
+    <span id="product-count">Có 0 sản phẩm</span>
+  </div>
+  <div id="product-list" class="grid"></div>
+</section>
+
+<!-- CART -->
+<div id="cart-box" class="hidden">
+  <h3>Giỏ hàng</h3>
+  <ul id="cart-items"></ul>
+  <div id="cart-footer" class="cart-footer hidden">
+    <button class="btn-login" onclick="buyAll()">MUA TẤT CẢ</button>
+  </div>
+</div>
+
+<div id="cart-toast" class="cart-toast hidden">
+  <div class="toast-header">
+    <span class="toast-status">Thêm vào giỏ hàng thành công</span>
+    <span class="toast-badge">✓</span>
+  </div>
+  <div class="toast-body">
+    <div class="toast-product">Tên sản phẩm</div>
+    <div class="toast-price">0đ</div>
+  </div>
+  <button class="toast-see-cart">Xem giỏ hàng</button>
+</div>
+<div id="product-detail-modal" class="modal hidden">
+  <div class="modal-backdrop" onclick="closeProductDetail()"></div>
+  <div class="product-detail-content">
+    <button class="detail-close" onclick="closeProductDetail()">×</button>
+    <div class="detail-grid">
+      <div class="detail-image">
+        <img id="detail-image" src="" alt="">
+      </div>
+      <div class="detail-info">
+        <h2 id="detail-title">Tên sản phẩm</h2>
+        <p id="detail-price" class="detail-price">0đ</p>
+        <div class="detail-field">
+          <label>Kích thước</label>
+          <div class="size-options">
+            <button type="button" class="size-btn" onclick="selectDetailSize('S')">S</button>
+            <button type="button" class="size-btn" onclick="selectDetailSize('M')">M</button>
+            <button type="button" class="size-btn" onclick="selectDetailSize('L')">L</button>
+            <button type="button" class="size-btn" onclick="selectDetailSize('XL')">XL</button>
+          </div>
+        </div>
+        <div class="detail-field">
+          <label>Số lượng</label>
+          <div class="quantity-control">
+            <button type="button" onclick="changeDetailQuantity(-1)">-</button>
+            <span id="detail-quantity">1</span>
+            <button type="button" onclick="changeDetailQuantity(1)">+</button>
+          </div>
+        </div>
+        <div class="detail-actions">
+          <button class="btn-login" onclick="addToCartFromDetail()">THÊM VÀO GIỎ</button>
+          <button class="btn-register" onclick="buyNow(detailProductId)">MUA NGAY</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- MODAL XÁC NHẬN MUA HÀNG -->
+<div id="confirm-modal" class="modal hidden">
+  <div class="modal-backdrop" onclick="closeConfirmModal()"></div>
+  <div class="notification-content" style="max-width:520px; width:90%; text-align:left;">
+    <button style="float:right;background:transparent;border:none;font-size:18px;" onclick="closeConfirmModal()">×</button>
+    <h3>Xác nhận mua hàng</h3>
+    <p id="confirm-text"></p>
+    <div style="margin-top:16px; display:flex; justify-content:flex-end; gap:12px; flex-wrap:wrap;">
+      <button class="btn-register" onclick="closeConfirmModal()">HỦY</button>
+      <button class="btn-login" id="confirm-buy-btn" onclick="confirmBuy()">XÁC NHẬN</button>
+    </div>
+  </div>
+</div>
+
+<!-- NOTIFICATION -->
+<div id="notification-modal" class="modal hidden">
+  <div class="modal-backdrop" onclick="closeNotification()"></div>
+  <div class="notification-content">
+    <div class="notification-icon" id="notification-icon">✓</div>
+    <h3 id="notification-title">Thành công!</h3>
+    <p id="notification-message">Hành động được thực hiện thành công</p>
+    <button onclick="closeNotification()" class="btn-notify-ok">OK</button>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

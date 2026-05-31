@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>Trang cá nhân - Shop GGB</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .profile-header { padding: 24px 32px; background:#fff; border-bottom:1px solid #eee; }
+    .profile-main { max-width:1000px; margin:40px auto; padding:0 16px; }
+    .account-container { display:flex; gap:24px; }
+    .account-sidebar { width:260px; }
+    .account-content { flex:1; background:#fff; padding:24px; border:1px solid #eee; }
+    .account-item { display:block; width:100%; text-align:left; padding:8px 12px; border:none; background:transparent; cursor:pointer; }
+    .account-item.active { font-weight:700; }
+    /* Orders styles */
+    .orders-tabs { display:flex; gap:18px; margin-bottom:18px; flex-wrap:wrap }
+    .orders-tabs button { background:transparent; border:none; cursor:pointer; padding:6px 8px; font-weight:600; }
+    .orders-tabs button.active { border-bottom:3px solid #111; }
+    .order-card { border:1px solid #eee; padding:12px; margin-bottom:12px; display:flex; justify-content:space-between; align-items:center; }
+    .order-meta { color:#666; font-size:13px }
+    .order-actions button { margin-left:8px }
+
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 16px;
+      border: 1px solid #d10d29;
+      background: white;
+      color: #d10d29;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 700;
+      transition: background 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .back-button:hover {
+      background: #d10d29;
+      color: white;
+      box-shadow: 0 10px 20px rgba(209, 13, 41, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <header class="profile-header">
+    <a href="index.html" class="back-button">◀ Quay về trang chủ</a>
+  </header>
+
+  <main class="profile-main">
+    <h1>THÔNG TIN CỦA TÔI</h1>
+
+    <div class="account-container">
+      <aside class="account-sidebar">
+        <h3>Tài khoản của tôi</h3>
+        <nav class="account-menu">
+          <button class="account-item" data-section="info" onclick="switchAccountSection(event)">Thông tin của tôi</button>
+          <button class="account-item" data-section="address" onclick="switchAccountSection(event)">Số địa chỉ</button>
+        </nav>
+
+        <h3 style="margin-top:18px">Trạng thái đơn hàng</h3>
+        <nav class="account-menu">
+          <button class="account-item" data-section="orders-all" onclick="switchAccountSection(event)">Tất cả các đơn hàng</button>
+          <button class="account-item" data-section="orders-processing" onclick="switchAccountSection(event)">Đơn hàng xử lý</button>
+          <button class="account-item" data-section="orders-pickup" onclick="switchAccountSection(event)">Đơn hàng chờ lấy hàng</button>
+          <button class="account-item" data-section="orders-shipping" onclick="switchAccountSection(event)">Đơn hàng đang giao</button>
+          <button class="account-item" data-section="orders-delivered" onclick="switchAccountSection(event)">Đơn hàng đã giao</button>
+          <button class="account-item" data-section="orders-cancelled" onclick="switchAccountSection(event)">Đơn hàng đã hủy</button>
+        </nav>
+
+        <button class="btn-logout" onclick="logout()">Đăng xuất</button>
+      </aside>
+
+      <!-- Right column removed: left menu will open modals/windows -->
+      <div id="account-empty" class="account-content-placeholder">
+        <p>Chọn mục bên trái để mở cửa sổ tương ứng.</p>
+      </div>
+
+      <!-- INFO MODAL -->
+      <div id="modal-info" class="modal hidden profile-modal">
+        <div class="modal-backdrop" onclick="closeModal('modal-info')"></div>
+        <div class="notification-content">
+          <button class="close-modal" onclick="closeModal('modal-info')">×</button>
+          <h3>Thông tin của tôi</h3>
+          <div class="account-field">
+            <label>Họ</label>
+            <input id="modal-profile-lastname" placeholder="Họ">
+          </div>
+          <div class="account-field">
+            <label>Tên</label>
+            <input id="modal-profile-firstname" placeholder="Tên">
+          </div>
+          <div class="account-field">
+            <label>Số điện thoại</label>
+            <input id="modal-profile-phone" placeholder="Số điện thoại">
+          </div>
+          <div class="account-field">
+            <label>Ngày sinh</label>
+            <input id="modal-profile-dob" type="date">
+          </div>
+          <div style="margin-top:12px"><button class="btn-login" onclick="saveProfileFromModal()">LƯU</button></div>
+        </div>
+      </div>
+
+      <!-- ADDRESS MODAL -->
+      <div id="modal-address" class="modal hidden profile-modal">
+        <div class="modal-backdrop" onclick="closeModal('modal-address')"></div>
+        <div class="notification-content">
+          <button class="close-modal" onclick="closeModal('modal-address')">×</button>
+          <h3>Địa chỉ của tôi</h3>
+          <div class="account-field">
+            <label>Địa chỉ hiện tại</label>
+            <input id="modal-profile-address" placeholder="Địa chỉ của tôi">
+          </div>
+          <div style="margin-top:12px"><button class="btn-login" onclick="saveAddressFromModal()">LƯU</button></div>
+        </div>
+      </div>
+
+      <!-- ORDERS MODAL (profile page) -->
+      <div id="modal-orders" class="modal hidden">
+        <div class="modal-backdrop" onclick="closeModal('modal-orders')"></div>
+        <div class="notification-content" style="max-width:900px; width:90%;">
+          <button style="float:right;background:transparent;border:none;font-size:18px;" onclick="closeModal('modal-orders')">×</button>
+          <h2>ĐƠN HÀNG CỦA TÔI</h2>
+          <div class="orders-tabs" style="margin-bottom:12px;">
+            <button id="profile-tab-all" onclick="renderOrdersList('all', true)">Tất cả đơn hàng</button>
+            <button id="profile-tab-processing" onclick="renderOrdersList('processing', true)">Chờ xử lý</button>
+            <button id="profile-tab-pickup" onclick="renderOrdersList('pickup', true)">Chờ lấy hàng</button>
+            <button id="profile-tab-shipping" onclick="renderOrdersList('shipping', true)">Đang giao</button>
+            <button id="profile-tab-delivered" onclick="renderOrdersList('delivered', true)">Đã giao</button>
+            <button id="profile-tab-cancelled" onclick="renderOrdersList('cancelled', true)">Đã hủy</button>
+          </div>
+          <div id="orders-modal-actions" class="orders-actions-bar"></div>
+          <div id="orders-modal-list"></div>
+        </div>
+      </div>
+
+      </div>
+    </div>
+  </main>
+
+  <div id="confirm-modal" class="modal hidden">
+    <div class="modal-backdrop" onclick="closeConfirmModal()"></div>
+    <div class="modal-content">
+      <h3>Xác nhận mua hàng</h3>
+      <p id="confirm-text"></p>
+      <div style="margin-top:16px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+        <button class="btn-register" onclick="closeConfirmModal()">HỦY</button>
+        <button class="btn-login" onclick="confirmBuy()">XÁC NHẬN</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="notification-modal" class="modal hidden">
+    <div class="modal-backdrop" onclick="closeNotification()"></div>
+    <div class="notification-content">
+      <div class="notification-icon" id="notification-icon">✓</div>
+      <h3 id="notification-title">Thành công!</h3>
+      <p id="notification-message">Hành động được thực hiện thành công</p>
+      <button onclick="closeNotification()" class="btn-notify-ok">OK</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    // Initialize profile page UI
+    document.addEventListener('DOMContentLoaded', function() {
+      // Ensure profile info is rendered from localStorage
+      renderProfileInfo();
+      showAccountEmpty();
+      // If the user is not logged in, redirect to homepage or show a message
+      const tabSessionId = sessionStorage.getItem('tabSessionId');
+      const currentUser = tabSessionId ? sessionStorage.getItem(`${tabSessionId}_currentUser`) : null;
+      if (!currentUser) {
+        // optional: redirect to index.html
+        // location.href = 'index.html';
+      }
+    });
+  </script>
+</body>
+</html>
